@@ -7,11 +7,14 @@ import java.util.List;
 @Service
 public class SoftwareEngineerService {
     private final SoftwareEngineerRepository softwareEngineerRepository;
+    private final AiService aiService;
 
     public SoftwareEngineerService(
-        SoftwareEngineerRepository softwareEngineerRepository
+        SoftwareEngineerRepository softwareEngineerRepository,
+        AiService aiService
     ){
         this.softwareEngineerRepository = softwareEngineerRepository;
+        this.aiService = aiService;
     }
 
     public List<SoftwareEngineer> getAllSoftwareEngineers(){
@@ -19,6 +22,15 @@ public class SoftwareEngineerService {
     }
 
     public void insertSoftwareEngineer(SoftwareEngineer softwareEngineer) {
+        String prompt = """
+                Based on the programming tech stack %s that %s has given
+                Provide a full learning path and recommendations for this person.
+                """.formatted(
+                softwareEngineer.getTechStack(),
+                softwareEngineer.getName()
+        );
+        String chatRes = aiService.chat(prompt);
+        softwareEngineer.setLearningPathRecommendation(chatRes);
         softwareEngineerRepository.save(softwareEngineer);
     }
 

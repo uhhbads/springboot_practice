@@ -31,6 +31,13 @@ public class SoftwareEngineerService {
 
 
     public void deleteSoftwareEngineerById(Integer id) {
+        boolean exists = softwareEngineerRepository.existsById(id);
+        if(!exists){
+            throw new IllegalStateException(
+              id + " not found"
+            );
+        }
+
         softwareEngineerRepository.deleteById(id);
     }
 
